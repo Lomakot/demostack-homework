@@ -82,7 +82,7 @@ const LoopButton:React.FC<LoopButtonProps> = ({item}) => {
         
     }, []);
     return (
-            <button className="loop-button" onClick={()=>{toggle()}}><FontAwesomeIcon icon={playing? faPause:faPlay} /></button>
+            <button style={playing?{backgroundColor:"#27c950"}:undefined} className="loop-button" onClick={()=>{toggle()}}><FontAwesomeIcon icon={playing? faPause:faPlay} /></button>
       );
 }
   

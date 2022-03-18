@@ -38,12 +38,22 @@
 }
 
 .loop-buttons-container{
+  width:450px;
   display:flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: center;
 }
 .loop-buttons-container button{
   width:100px;
   height: 100px;
+  background-color: #bd5536;
+  border: none;
+  color: white;
+  padding: 10px;
+  margin: 12px; 
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }
