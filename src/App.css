@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.loop-buttons-container{
+  display:flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.loop-buttons-container button{
+  width:100px;
+  height: 100px;
+}
