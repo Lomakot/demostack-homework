@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlay,faPause } from '@fortawesome/free-solid-svg-icons'
 const song1 = require("./static/music/1.mp3")
 const song2 = require("./static/music/2.mp3")
 const song3 = require("./static/music/3.mp3")
@@ -8,6 +10,7 @@ const song6 = require("./static/music/6.mp3")
 const song7 = require("./static/music/7.mp3")
 const song8 = require("./static/music/8.mp3")
 const song9 = require("./static/music/9.mp3")
+
 
 
 interface LoopItem{
@@ -30,6 +33,12 @@ const LoopButton:React.FC<LoopButtonProps> = ({item}) => {
         },
         [playing]
     );
+    useEffect(() => {
+        audio.addEventListener('ended', () => setPlaying(false));
+        return () => {
+            audio.removeEventListener('ended', () => setPlaying(false));
+        };
+    },[audio])
     
     useEffect(() => {
         switch(item.musicFile){
@@ -71,13 +80,9 @@ const LoopButton:React.FC<LoopButtonProps> = ({item}) => {
             }
         }
         
-        audio.addEventListener('ended', () => setPlaying(false));
-        return () => {
-        audio.removeEventListener('ended', () => setPlaying(false));
-        };
     }, []);
     return (
-            <button className="loop-button" onClick={()=>{toggle()}}>{item.id}</button>
+            <button className="loop-button" onClick={()=>{toggle()}}><FontAwesomeIcon icon={playing? faPause:faPlay} /></button>
       );
 }
   
