@@ -20,7 +20,7 @@ const App: React.FC = () => {
     setMainLoopPlaying(!mainLoopPlaying);
   }
 
-  
+  //start a timer and increase beat or clear timer if stopped
   useEffect(()=>{
     if(mainLoopPlaying){
       clearInterval(timer)

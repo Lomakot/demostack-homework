@@ -12,9 +12,6 @@ const song7 = require("./static/music/7.mp3")
 const song8 = require("./static/music/8.mp3")
 const song9 = require("./static/music/9.mp3")
 
-
-
-
 type LoopButtonProps = {
     item: LoopItem
     toggleIsPlaying: Function
@@ -26,8 +23,8 @@ const LoopButton:React.FC<LoopButtonProps> = ({item,toggleIsPlaying,beat,mainLoo
 
     const [audio,setAudio] = useState<HTMLAudioElement>(new Audio(song1));
 
+    //reset and start playing with the beat
     useEffect(() => {
-        //audio.pause();
         audio.currentTime = 0
         if(item.isPlaying){
             audio.play();
@@ -35,6 +32,7 @@ const LoopButton:React.FC<LoopButtonProps> = ({item,toggleIsPlaying,beat,mainLoo
     },
         [beat]
     );
+    //pause single
     useEffect(() => {
         if(!item.isPlaying){
             audio.pause();
@@ -42,24 +40,18 @@ const LoopButton:React.FC<LoopButtonProps> = ({item,toggleIsPlaying,beat,mainLoo
     },
         [item.isPlaying]
     );
+    //pause all
     useEffect(() => {
         if(!mainLoopPlaying){
             audio.pause();
         }
-    },
-        [mainLoopPlaying]
-    );
-    // useEffect(() => {
-    //     audio.addEventListener('ended', () => console.log("song ended"),toggleIsPlaying(item.id,false));
-    //     return () => {
-    //         audio.removeEventListener('ended', () => toggleIsPlaying(item.id,false));
-    //     };
-    // },[audio])
+    },[mainLoopPlaying]);
 
     useEffect(()=>{
         audio.loop = true;
     },[audio])
     
+    //choose audio file per item
     useEffect(() => {
         switch(item.musicFile){
             case "1.mp3":{
