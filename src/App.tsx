@@ -1,4 +1,6 @@
 import React, { useEffect, useState, MouseEventHandler } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlay,faPause } from '@fortawesome/free-solid-svg-icons'
 import LoopButton from './LoopButton';
 import { LoopItem } from './LoopItem';
 import './App.css';
@@ -10,20 +12,26 @@ const App: React.FC = () => {
 
   const [beat,setBeat] = useState<number>(0);
 
-  const beatTimer = () => setInterval(()=>{setBeat(beat=>beat+1)},3000)
+  const beatTimer = () => {return setInterval(()=>{setBeat(beat=>beat+1)},8000)}
 
   const [timer,setTimer] = useState<NodeJS.Timer>(beatTimer)
 
   const toggle: MouseEventHandler = (event:React.MouseEvent<HTMLButtonElement>) => {
-    if(!mainLoopPlaying){
-      setTimer(beatTimer)
-    } else {
-      clearInterval(timer);
-    }
     setMainLoopPlaying(!mainLoopPlaying);
   }
 
-  //clear interval when component unmounts
+  
+  useEffect(()=>{
+    if(mainLoopPlaying){
+      clearInterval(timer)
+      setBeat(beat=>beat+1)
+      setTimer(beatTimer())
+    } else {
+      clearInterval(timer)
+    }
+  },[mainLoopPlaying])
+
+  //clear interval when component mounts and unmounts
   useEffect(()=>{
     clearInterval(timer);
     return () => clearInterval(timer)
@@ -46,12 +54,12 @@ const App: React.FC = () => {
       <header className="App-header">
         <div className='main-button-div'>
           <button className="main-button" onClick={toggle}>
-            {mainLoopPlaying?"Stop":"Play"}
+            {<FontAwesomeIcon icon={mainLoopPlaying? faPause:faPlay} />}
           </button>
           <label className='beat-label'>Beat: {beat}</label>
         </div>
         <div className='loop-buttons-container'>
-          {loopItems.map((item)=><LoopButton key={item.id} beat={beat} toggleIsPlaying={toggleIsPlaying} item={item}/>)}
+          {loopItems.map((item)=><LoopButton key={item.id} beat={beat} toggleIsPlaying={toggleIsPlaying} item={item} mainLoopPlaying={mainLoopPlaying}/>)}
         </div>
       </header>
     </div>

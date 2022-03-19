@@ -19,14 +19,15 @@ type LoopButtonProps = {
     item: LoopItem
     toggleIsPlaying: Function
     beat: number
+    mainLoopPlaying: boolean
 }
 
-const LoopButton:React.FC<LoopButtonProps> = ({item,toggleIsPlaying,beat}) => {
+const LoopButton:React.FC<LoopButtonProps> = ({item,toggleIsPlaying,beat,mainLoopPlaying}) => {
 
     const [audio,setAudio] = useState<HTMLAudioElement>(new Audio(song1));
 
     useEffect(() => {
-        audio.pause();
+        //audio.pause();
         audio.currentTime = 0
         if(item.isPlaying){
             audio.play();
@@ -40,6 +41,13 @@ const LoopButton:React.FC<LoopButtonProps> = ({item,toggleIsPlaying,beat}) => {
         }
     },
         [item.isPlaying]
+    );
+    useEffect(() => {
+        if(!mainLoopPlaying){
+            audio.pause();
+        }
+    },
+        [mainLoopPlaying]
     );
     // useEffect(() => {
     //     audio.addEventListener('ended', () => console.log("song ended"),toggleIsPlaying(item.id,false));
