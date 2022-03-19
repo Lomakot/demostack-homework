@@ -4,7 +4,6 @@ import { faPlay,faPause } from '@fortawesome/free-solid-svg-icons'
 import LoopButton from './LoopButton';
 import { LoopItem } from './LoopItem';
 import './App.css';
-import { Node } from 'typescript';
 
 const App: React.FC = () => {
 
@@ -12,9 +11,11 @@ const App: React.FC = () => {
 
   const [beat,setBeat] = useState<number>(0);
 
-  const beatTimer = () => {return setInterval(()=>{setBeat(beat=>beat+1)},8000)}
+  function createBeatTimer(){
+    return setInterval(()=>{setBeat(beat=>beat+1)},8000);
+  }
 
-  const [timer,setTimer] = useState<NodeJS.Timer>(beatTimer)
+  const [timer,setTimer] = useState<NodeJS.Timer>(createBeatTimer)
 
   const toggle: MouseEventHandler = (event:React.MouseEvent<HTMLButtonElement>) => {
     setMainLoopPlaying(!mainLoopPlaying);
@@ -22,10 +23,12 @@ const App: React.FC = () => {
 
   //start a timer and increase beat or clear timer if stopped
   useEffect(()=>{
+    console.log("in useeffect for mainlooplaying:" + mainLoopPlaying.toString())
     if(mainLoopPlaying){
       clearInterval(timer)
       setBeat(beat=>beat+1)
-      setTimer(beatTimer())
+      const interval = createBeatTimer()
+      setTimer(interval)
     } else {
       clearInterval(timer)
     }
@@ -33,9 +36,10 @@ const App: React.FC = () => {
 
   //clear interval when component mounts and unmounts
   useEffect(()=>{
+    console.log("called the clear interval function")
     clearInterval(timer);
     return () => clearInterval(timer)
-  },[])
+  }, [])
 
   //initialize all the items with corresponding songs
   const [loopItems,setLoopItems]  = useState<LoopItem[]>(Array.from(Array(9)).map((e,i)=>i+1).map((id)=>{
