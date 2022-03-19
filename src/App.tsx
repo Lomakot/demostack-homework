@@ -23,7 +23,7 @@ const App: React.FC = () => {
 
   //start a timer and increase beat or clear timer if stopped
   useEffect(()=>{
-    console.log("in useeffect for mainlooplaying:" + mainLoopPlaying.toString())
+    //console.log("in useeffect for mainlooplaying:" + mainLoopPlaying.toString())
     if(mainLoopPlaying){
       clearInterval(timer)
       setBeat(beat=>beat+1)
@@ -36,7 +36,7 @@ const App: React.FC = () => {
 
   //clear interval when component mounts and unmounts
   useEffect(()=>{
-    console.log("called the clear interval function")
+    //console.log("called the clear interval function")
     clearInterval(timer);
     return () => clearInterval(timer)
   }, [])
