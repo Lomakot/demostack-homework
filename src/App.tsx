@@ -13,16 +13,24 @@ const App: React.FC = () => {
 
   const [mainLoopPlaying,setMainLoopPlaying] = useState(false)
 
-  const [beat,setBeat] = useState<number>(0);
+  const [beat,setBeat] = useState(0);
+
+  const [timeDelay,setTimeDelay] = useState(0)
 
   //initialize all the items with corresponding songs
   const [loopItems,setLoopItems]  = useState<LoopItem[]>(loopItemsArr)
 
-  function createBeatTimer(){
-    return setInterval(()=>{setBeat(beat=>beat+1)},8000);
+  function createBeatTimer(launchTime:number):number{
+    return (setTimeout(()=>{
+      setBeat(beat=>beat+1)
+      const runTime = (new Date()).getTime()
+      const delay = runTime - launchTime
+      setTimeDelay(delay-8000)
+      return () => createBeatTimer(runTime)
+    },8000-timeDelay)) as unknown as number;
   }
 
-  const [timer,setTimer] = useState<NodeJS.Timer>(createBeatTimer)
+  const [timer,setTimer] = useState<number>(0)
 
   const toggle: MouseEventHandler = (event:React.MouseEvent<HTMLButtonElement>) => {
     setMainLoopPlaying(!mainLoopPlaying);
@@ -30,17 +38,19 @@ const App: React.FC = () => {
 
   //start a timer and increase beat or clear timer if stopped
   useEffect(()=>{
-    //we want to only start if one of the squares is green, otherwise dont.
+    
     startStopPlaying()
   },[mainLoopPlaying])
 
   const startStopPlaying = () => {
     let isGreen = false
+    //we want to only start if one of the squares is green, otherwise dont.
     loopItems.forEach((loopItem)=>{loopItem.isPlaying?isGreen=true:void(0)})
+    const launchTime = (new Date()).getTime()
     if(mainLoopPlaying && isGreen){
       clearInterval(timer)
       setBeat(beat=>beat+1)
-      const interval = createBeatTimer()
+      const interval = createBeatTimer(launchTime)
       setTimer(interval)
     } else {
       clearInterval(timer)
