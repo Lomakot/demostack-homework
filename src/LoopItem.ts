@@ -44,13 +44,13 @@ export class Synchronizer{
     }
 
     private play(){
-        let songsPlaying = ""
+        //let songsPlaying = ""
         for(let song of this.songs){
             song.currentTime = 0;
             song.play();
-            songsPlaying+=(song.src+",")
+            //songsPlaying+=(song.src+",")
         }
-        console.log(songsPlaying)
+        //console.log(songsPlaying)
         this.running = true
     }
 
