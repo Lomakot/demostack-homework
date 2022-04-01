@@ -10,13 +10,11 @@ export class Synchronizer{
     timer: number | undefined
     delay: number
     running: boolean
-    count: number = 0
     constructor(){
       this.songs = []
       this.timer = undefined
       this.delay = 0
       this.running = false
-      this.count++
     }
   
     addSong(song:HTMLAudioElement){
@@ -32,7 +30,7 @@ export class Synchronizer{
         if(!this.running){
             const launchTime = (new Date()).getTime()
             this.play()
-            //console.log(this.delay)
+            console.log(this.delay)
             this.timer = setTimeout(()=>{
                 const runTime = (new Date()).getTime()
                 this.delay = runTime - launchTime - 8000
@@ -44,13 +42,14 @@ export class Synchronizer{
     }
 
     private play(){
-        //let songsPlaying = ""
+        let songsPlaying = ""
         for(let song of this.songs){
+            song.pause()
             song.currentTime = 0;
             song.play();
-            //songsPlaying+=(song.src+",")
+            songsPlaying+=(song.src.split('/').pop()?.split('.').shift()+",")
         }
-        //console.log(songsPlaying)
+        console.log(songsPlaying)
         this.running = true
     }
 
