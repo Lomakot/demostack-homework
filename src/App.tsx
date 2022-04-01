@@ -2,33 +2,25 @@ import React, { useEffect, useState, MouseEventHandler } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay,faPause } from '@fortawesome/free-solid-svg-icons'
 import LoopButton from './LoopButton';
-import { LoopItem } from './LoopItem';
+import { LoopItem, Synchronizer } from './LoopItem';
 import './App.css';
 
 const loopItemsArr = Array.from(Array(9)).map((e,i)=>i+1).map((id)=>{
-  return { id:id, musicFile:(id).toString()+".mp3", isPlaying:false}
+  return { id:id, musicFile:(id).toString()+".mp3"}
 })
+
+const synchronizer = new Synchronizer()
 
 const App: React.FC = () => {
 
   const [mainLoopPlaying,setMainLoopPlaying] = useState(false)
 
-  const [beat,setBeat] = useState(0);
-
   const [timeDelay,setTimeDelay] = useState(0)
+
+  
 
   //initialize all the items with corresponding songs
   const [loopItems,setLoopItems]  = useState<LoopItem[]>(loopItemsArr)
-
-  function createBeatTimer(launchTime:number):number{
-    return (setTimeout(()=>{
-      setBeat(beat=>beat+1)
-      const runTime = (new Date()).getTime()
-      const delay = runTime - launchTime
-      setTimeDelay(delay-8000)
-      return () => createBeatTimer(runTime)
-    },8000-timeDelay)) as unknown as number;
-  }
 
   const [timer,setTimer] = useState<number>(0)
 
@@ -36,26 +28,13 @@ const App: React.FC = () => {
     setMainLoopPlaying(!mainLoopPlaying);
   }
 
-  //start a timer and increase beat or clear timer if stopped
+  //start and stop synchronizer
   useEffect(()=>{
-    
-    startStopPlaying()
+    if(mainLoopPlaying)
+      synchronizer.start()
+    else
+      synchronizer.stop()
   },[mainLoopPlaying])
-
-  const startStopPlaying = () => {
-    let isGreen = false
-    //we want to only start if one of the squares is green, otherwise dont.
-    loopItems.forEach((loopItem)=>{loopItem.isPlaying?isGreen=true:void(0)})
-    const launchTime = (new Date()).getTime()
-    if(mainLoopPlaying && isGreen){
-      clearInterval(timer)
-      setBeat(beat=>beat+1)
-      const interval = createBeatTimer(launchTime)
-      setTimer(interval)
-    } else {
-      clearInterval(timer)
-    }
-  }
 
   //clear interval when component mounts and unmounts
   useEffect(()=>{
@@ -64,26 +43,6 @@ const App: React.FC = () => {
     return () => clearInterval(timer)
   }, [])
 
-  //handler for updating the loop items list
-  const toggleIsPlaying = (id:number,forced?:boolean) => {
-    // this doesnt make the components depending on this array to update, only changing the array point does.
-    // const index = loopItems.findIndex((loopItem) => loopItem.id === id)
-    // loopItems[index] = { ...loopItems[index], isPlaying:forced?forced:!loopItems[index].isPlaying}
-    // setLoopItems(loopItems)
-    const newLoopItems = loopItems.map((loopItem)=>{
-      if(loopItem.id===id){
-        loopItem.isPlaying = forced?forced:!loopItem.isPlaying
-      }
-      return loopItem
-    })
-    setLoopItems(newLoopItems)
-    const numOfPlayingSongs = loopItems.reduce((prevSum,c)=>prevSum+(c.isPlaying?1:0),0)
-    //only check if to start or stop if 1 or 0 songs
-    if(numOfPlayingSongs<2){
-      startStopPlaying()
-    }
-  }
-
   return (
     <div className="App">
       <header className="App-header">
@@ -91,10 +50,9 @@ const App: React.FC = () => {
           <button className="main-button" onClick={toggle}>
             {<FontAwesomeIcon icon={mainLoopPlaying? faPause:faPlay} />}
           </button>
-          <label className='beat-label'>Beat: {beat}</label>
         </div>
         <div className='loop-buttons-container'>
-          {loopItems.map((item)=><LoopButton key={item.id} beat={beat} toggleIsPlaying={toggleIsPlaying} item={item} mainLoopPlaying={mainLoopPlaying}/>)}
+          {loopItems.map((item)=><LoopButton synchronizer={synchronizer} key={item.id} item={item} />)}
         </div>
       </header>
     </div>

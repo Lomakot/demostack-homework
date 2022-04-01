@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlay,faPause } from '@fortawesome/free-solid-svg-icons'
-import { LoopItem } from './LoopItem';
+import { LoopItem,Synchronizer } from './LoopItem';
 const song1 = require("./static/music/1.mp3")
 const song2 = require("./static/music/2.mp3")
 const song3 = require("./static/music/3.mp3")
@@ -14,41 +14,33 @@ const song9 = require("./static/music/9.mp3")
 
 type LoopButtonProps = {
     item: LoopItem
-    toggleIsPlaying: Function
-    beat: number
-    mainLoopPlaying: boolean
+    isPlaying?: boolean
+    synchronizer: Synchronizer
 }
 
-const LoopButton:React.FC<LoopButtonProps> = ({item,toggleIsPlaying,beat,mainLoopPlaying}) => {
+const LoopButton:React.FC<LoopButtonProps> = ({item, synchronizer}) => {
 
     const [audio,setAudio] = useState<HTMLAudioElement>(new Audio(song1));
 
-    //reset and start playing with the beat
+    const [isPlaying,setIsPlaying] = useState(false)
+
+    const toggleIsPlaying = () => {
+        setIsPlaying(!isPlaying)
+    }
+    //connect to synchronizer
     useEffect(() => {
-        audio.currentTime = 0
-        if(item.isPlaying){
-            audio.play();
+        if(!isPlaying){
+            synchronizer.removeSong(audio)
+        } else {
+            synchronizer.addSong(audio)
         }
     },
-        [beat]
+        [isPlaying]
     );
-    //pause single
-    useEffect(() => {
-        if(!item.isPlaying){
-            audio.pause();
-        }
-    },
-        [item.isPlaying]
-    );
-    //pause all
-    useEffect(() => {
-        if(!mainLoopPlaying){
-            audio.pause();
-        }
-    },[mainLoopPlaying]);
+
 
     useEffect(()=>{
-        audio.loop = true;
+        //audio.loop = true;
     },[audio])
     
     //choose audio file per item
@@ -94,7 +86,7 @@ const LoopButton:React.FC<LoopButtonProps> = ({item,toggleIsPlaying,beat,mainLoo
         
     }, []);
     return (
-            <button style={item.isPlaying?{backgroundColor:"#27c950"}:undefined} className="loop-button" onClick={()=>toggleIsPlaying(item.id)}><FontAwesomeIcon icon={item.isPlaying? faPause:faPlay} /></button>
+            <button disabled={item.id===4} style={isPlaying?{backgroundColor:"#27c950"}:undefined} className="loop-button" onClick={toggleIsPlaying}><FontAwesomeIcon icon={isPlaying? faPause:faPlay} /></button>
       );
 }
   

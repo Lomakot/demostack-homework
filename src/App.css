@@ -58,6 +58,11 @@
   font-size: 16px;
 }
 
+.loop-buttons-container button:disabled{
+  border: 1px solid #999;
+  background-color: #cccccc;
+}
+
 .beat-label{
   display:block;
 }
